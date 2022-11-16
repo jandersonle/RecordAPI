@@ -20,7 +20,7 @@ namespace RecordAPI.Controllers
             _context = context;
         }
 
-        // GET: api/RecordItems
+        // GET: api/RecordItemsController/
         [HttpGet]
         public async Task<ActionResult<IEnumerable<RecordItem>>> GetRecordItems()
         {
@@ -31,7 +31,7 @@ namespace RecordAPI.Controllers
             return await _context.RecordItems.ToListAsync();
         }
 
-        // GET: api/RecordItems/5
+        // GET: api/RecordItemsController/5
         [HttpGet("{id}")]
         public async Task<ActionResult<RecordItem>> GetRecordItem(long id)
         {
@@ -48,8 +48,20 @@ namespace RecordAPI.Controllers
 
             return recordItem;
         }
+        // GET api/RecordItemsController/example.json
+        [HttpGet("example.json")]
+        public RecordItem GetExample()
+        {
+            var rec = new RecordItem();
+            rec.id = 1;
+            rec.recordDate = DateTime.Now;
+            rec.recordReviewed = false;
+            rec.recordPublished = false;
 
-        // PUT: api/RecordItems/5
+            return rec;
+        }
+
+        // PUT: api/RecordItemsController/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutRecordItem(long id, RecordItem recordItem)
@@ -80,7 +92,7 @@ namespace RecordAPI.Controllers
             return NoContent();
         }
 
-        // POST: api/RecordItems
+        // POST: api/RecordItemsController/
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<RecordItem>> PostRecordItem(RecordItem recordItem)
@@ -95,7 +107,7 @@ namespace RecordAPI.Controllers
             return CreatedAtAction(nameof(GetRecordItem), new { id = recordItem.id }, recordItem);
         }
 
-        // DELETE: api/RecordItems/5
+        // DELETE: api/RecordItemsController/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteRecordItem(long id)
         {
