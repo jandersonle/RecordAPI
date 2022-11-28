@@ -1,26 +1,33 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using NuGet.Protocol;
 using RecordAPI.Models;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace RecordAPI.Controllers
 {
-    [Route("api/RecordItemsController")]
+    [Route("api")]
     [ApiController]
     public class RecordItemsController : ControllerBase
     {
         private readonly RecordContext _context;
+
+        private readonly string iconnStr = "";
 
         public RecordItemsController(RecordContext context)
         {
             _context = context;
         }
 
-        // GET: api/RecordItemsController/
+        // GET: api/
         [HttpGet]
         public async Task<ActionResult<IEnumerable<RecordItem>>> GetRecordItems()
         {
@@ -31,7 +38,7 @@ namespace RecordAPI.Controllers
             return await _context.RecordItems.ToListAsync();
         }
 
-        // GET: api/RecordItemsController/5
+        // GET: api/5
         [HttpGet("{id}")]
         public async Task<ActionResult<RecordItem>> GetRecordItem(long id)
         {
@@ -48,20 +55,64 @@ namespace RecordAPI.Controllers
 
             return recordItem;
         }
-        // GET api/RecordItemsController/example.json
-        [HttpGet("example.json")]
-        public RecordItem GetExample()
+        // GET api/exposures/id
+        [HttpGet("exposures/{id}")]
+        public async Task<ActionResult<object>> GetExposure(long id)
         {
-            var rec = new RecordItem();
-            rec.id = 1;
-            rec.recordDate = DateTime.Now;
-            rec.recordReviewed = false;
-            rec.recordPublished = false;
+            DataTable dt = new DataTable();
+            var connStr = iconnStr;
+            var sqlQuery = "select * from Exposure where EXPO_ID_NB = " + id + ";";
+            var rows_returned = 0;
 
-            return rec;
+            using (SqlConnection connection = new SqlConnection(connStr))
+            using (SqlCommand cmd = connection.CreateCommand())
+            using (SqlDataAdapter sda = new SqlDataAdapter(cmd))
+            {
+                cmd.CommandText = sqlQuery;
+                cmd.CommandType = CommandType.Text;
+                connection.Open();
+                rows_returned = sda.Fill(dt);
+                connection.Close();
+            }
+
+            if (dt.Rows.Count > 0)
+            {
+                return dt.ToJson();
+            }
+
+            return NotFound();
+
         }
 
-        // PUT: api/RecordItemsController/5
+        // GET api/calls/id
+        [HttpGet("calls/{id}")]
+        public async Task<ActionResult<object>> GetCall(long id)
+        {
+            DataTable dt = new DataTable();
+            var connStr = iconnStr;
+            var sqlQuery = "select * from Call where CALL_ID_NB = " + id + ";";
+            var rows_returned = 0;
+            
+            using (SqlConnection connection = new SqlConnection(connStr))
+            using (SqlCommand cmd = connection.CreateCommand())
+            using (SqlDataAdapter sda = new SqlDataAdapter(cmd))
+            {
+                cmd.CommandText = sqlQuery;
+                cmd.CommandType = CommandType.Text;
+                connection.Open();
+                rows_returned = sda.Fill(dt);
+                connection.Close();
+            }
+
+            if(dt.Rows.Count > 0) {
+                return dt.ToJson();
+            }
+
+            return NotFound();
+
+        }
+
+        // PUT: api/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutRecordItem(long id, RecordItem recordItem)
@@ -92,7 +143,7 @@ namespace RecordAPI.Controllers
             return NoContent();
         }
 
-        // POST: api/RecordItemsController/
+        // POST: api/
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<RecordItem>> PostRecordItem(RecordItem recordItem)
@@ -107,7 +158,7 @@ namespace RecordAPI.Controllers
             return CreatedAtAction(nameof(GetRecordItem), new { id = recordItem.id }, recordItem);
         }
 
-        // DELETE: api/RecordItemsController/5
+        // DELETE: api/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteRecordItem(long id)
         {
@@ -125,6 +176,7 @@ namespace RecordAPI.Controllers
             await _context.SaveChangesAsync();
 
             return NoContent();
+
         }
 
         private bool RecordItemExists(long id)
