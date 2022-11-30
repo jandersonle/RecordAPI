@@ -21,11 +21,14 @@ namespace RecordAPI.Controllers
     {
         private readonly RecordContext _context;
 
+        private readonly ExternalDbRunner _runner;
+
         private readonly string iconnStr = "";
 
         public RecordItemsController(RecordContext context)
         {
             _context = context;
+            _runner = new(iconnStr);
         }
 
         // GET: api/
@@ -61,36 +64,8 @@ namespace RecordAPI.Controllers
         public async Task<ActionResult<object>> GetExposure(long id)
         {
             // LATEST APPROACH
-            ExternalDbRunner runner = new(iconnStr);
-            var res = runner.getExposure(id);
+            var res = _runner.getExposure(id);
             return res;
-
-            // OLD APPROACH
-            //DataTable dt = new DataTable();
-            //var connStr = iconnStr;
-            //var sqlQuery = @"select 
-            //               * from Exposure 
-            //                where EXPO_ID_NB = " + id + ";";
-            //var rows_returned = 0;
-
-            //using (SqlConnection connection = new SqlConnection(connStr))
-            //using (SqlCommand cmd = connection.CreateCommand())
-            //using (SqlDataAdapter sda = new SqlDataAdapter(cmd))
-            //{
-            //    cmd.CommandText = sqlQuery;
-            //    cmd.CommandType = CommandType.Text;
-            //    connection.Open();
-            //    rows_returned = sda.Fill(dt);
-            //    connection.Close();
-            //}
-
-            //if (dt.Rows.Count == 1)
-            //{
-            //    return dt.ToJson();
-            //}
-
-            //return NotFound();
-
 
         }
 
@@ -99,8 +74,7 @@ namespace RecordAPI.Controllers
         public async Task<ActionResult<object>> GetCall(long id)
         {
             // LATEST APPROACH
-            ExternalDbRunner runner = new(iconnStr);
-            var res = runner.getCall(id);
+            var res = _runner.getCall(id);
             return res;
 
 

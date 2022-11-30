@@ -4,6 +4,11 @@ using NuGet.Protocol;
 
 namespace RecordAPI.ExternalDBService
 {
+
+    /// <summary>
+    /// Class <c>ExternalDbRunner</c> acts as a service runner for fetching Exposures and Calls from the database.
+    /// Relies on an internal Data Access Layer (DAL) object for database level interactions.
+    /// </summary>
     public class ExternalDbRunner
     {
 
@@ -15,6 +20,10 @@ namespace RecordAPI.ExternalDBService
 
         }
 
+
+        /// <summary>
+        /// Method <c>init</c> initalizes an internal DataAcessLayer object passing in the provided database connection string.
+        /// </summary>
         private void init(String iconnStr)
         {
             _dataAccess = new();
@@ -22,6 +31,11 @@ namespace RecordAPI.ExternalDBService
             return;
         }
 
+
+        /// <summary>
+        /// Method <c>getExposure</c> retreives the Exposure with the provided EXPO_ID_NB and returns it in a json format.
+        /// If the exposure does not exist, an empty string is returned.
+        /// </summary>
         public String getExposure(long id)
         {
             String query = @"select *
@@ -37,6 +51,11 @@ namespace RecordAPI.ExternalDBService
             return "";
         }
 
+
+        /// <summary>
+        /// Method <c>geCall</c> retreives the Call with the provided CALL_ID_NB and returns it in a json format
+        /// If the call does not exist, an empty string is returned.
+        /// </summary>
         public String getCall(long id)
         {
             String query = @"select *
