@@ -21,7 +21,7 @@ namespace RecordAPI.Controllers
     {
         private readonly RecordContext _context;
 
-        private readonly string iconnStr = "data Source = 10.1.0.5; Encrypt = yes; TrustServerCertificate = True; Initial Catalog = UFPoison; Max Pool Size = 200; App = ToxSentry NPDS AU-Dev; MultipleActiveResultSets = true;User ID = ToxSentryApp; Password=4gKAhcEJbsZ5CN&x";
+        private readonly string iconnStr = "";
 
         public RecordItemsController(RecordContext context)
         {
