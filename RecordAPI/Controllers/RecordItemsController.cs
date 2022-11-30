@@ -9,6 +9,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using NuGet.Protocol;
+using RecordAPI.ExternalDBService;
 using RecordAPI.Models;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -20,7 +21,7 @@ namespace RecordAPI.Controllers
     {
         private readonly RecordContext _context;
 
-        private readonly string iconnStr = "";
+        private readonly string iconnStr = "data Source = 10.1.0.5; Encrypt = yes; TrustServerCertificate = True; Initial Catalog = UFPoison; Max Pool Size = 200; App = ToxSentry NPDS AU-Dev; MultipleActiveResultSets = true;User ID = ToxSentryApp; Password=4gKAhcEJbsZ5CN&x";
 
         public RecordItemsController(RecordContext context)
         {
@@ -59,28 +60,37 @@ namespace RecordAPI.Controllers
         [HttpGet("exposures/{id}")]
         public async Task<ActionResult<object>> GetExposure(long id)
         {
-            DataTable dt = new DataTable();
-            var connStr = iconnStr;
-            var sqlQuery = "select * from Exposure where EXPO_ID_NB = " + id + ";";
-            var rows_returned = 0;
+            // LATEST APPROACH
+            ExternalDbRunner runner = new(iconnStr);
+            var res = runner.getExposure(id);
+            return res;
 
-            using (SqlConnection connection = new SqlConnection(connStr))
-            using (SqlCommand cmd = connection.CreateCommand())
-            using (SqlDataAdapter sda = new SqlDataAdapter(cmd))
-            {
-                cmd.CommandText = sqlQuery;
-                cmd.CommandType = CommandType.Text;
-                connection.Open();
-                rows_returned = sda.Fill(dt);
-                connection.Close();
-            }
+            // OLD APPROACH
+            //DataTable dt = new DataTable();
+            //var connStr = iconnStr;
+            //var sqlQuery = @"select 
+            //               * from Exposure 
+            //                where EXPO_ID_NB = " + id + ";";
+            //var rows_returned = 0;
 
-            if (dt.Rows.Count > 0)
-            {
-                return dt.ToJson();
-            }
+            //using (SqlConnection connection = new SqlConnection(connStr))
+            //using (SqlCommand cmd = connection.CreateCommand())
+            //using (SqlDataAdapter sda = new SqlDataAdapter(cmd))
+            //{
+            //    cmd.CommandText = sqlQuery;
+            //    cmd.CommandType = CommandType.Text;
+            //    connection.Open();
+            //    rows_returned = sda.Fill(dt);
+            //    connection.Close();
+            //}
 
-            return NotFound();
+            //if (dt.Rows.Count == 1)
+            //{
+            //    return dt.ToJson();
+            //}
+
+            //return NotFound();
+
 
         }
 
@@ -88,28 +98,60 @@ namespace RecordAPI.Controllers
         [HttpGet("calls/{id}")]
         public async Task<ActionResult<object>> GetCall(long id)
         {
-            DataTable dt = new DataTable();
-            var connStr = iconnStr;
-            var sqlQuery = "select * from Call where CALL_ID_NB = " + id + ";";
-            var rows_returned = 0;
-            
-            using (SqlConnection connection = new SqlConnection(connStr))
-            using (SqlCommand cmd = connection.CreateCommand())
-            using (SqlDataAdapter sda = new SqlDataAdapter(cmd))
-            {
-                cmd.CommandText = sqlQuery;
-                cmd.CommandType = CommandType.Text;
-                connection.Open();
-                rows_returned = sda.Fill(dt);
-                connection.Close();
-            }
+            // LATEST APPROACH
+            ExternalDbRunner runner = new(iconnStr);
+            var res = runner.getCall(id);
+            return res;
 
-            if(dt.Rows.Count > 0) {
-                return dt.ToJson();
-            }
 
-            return NotFound();
+            // ALTERNATIVE 1
+            //var sqlQuery = @"select *
+            //                from Call 
+            //                where CALL_ID_NB = " + id + ";";
+            //DataTable dt = new();
+            //var connStr = iconnStr;
+            //var rows_returned = 0;
 
+            //using (SqlConnection connection = new(connStr))
+            //using (SqlCommand cmd = connection.CreateCommand())
+            //using (SqlDataAdapter sda = new(cmd))
+            //{
+            //    cmd.CommandText = sqlQuery;
+            //    cmd.CommandType = CommandType.Text;
+            //    connection.Open();
+            //    rows_returned = sda.Fill(dt);
+            //    connection.Close();
+            //}
+
+            //if (dt.Rows.Count == 1)
+            //{
+            //    return dt.ToJson();
+            //}
+
+            //return NotFound();
+
+
+            // ALTERNATIVE 2
+            //SqlConnection conn = new SqlConnection(iconnStr);
+            //var dbCmd = new SqlCommand();
+            //using(dbCmd)
+            //{
+            //    dbCmd.Connection = conn;
+            //    dbCmd.CommandText = sqlQuery;
+            //    conn.Open();
+
+            //    using (var reader = dbCmd.ExecuteReader())
+            //    {
+            //        if(reader.HasRows)
+            //        {
+            //            return reader.ToJson();
+            //        }
+            //        else
+            //        {
+            //            return NotFound();
+            //        }
+            //    }
+            //}
         }
 
         // PUT: api/5
@@ -156,6 +198,7 @@ namespace RecordAPI.Controllers
             await _context.SaveChangesAsync();
 
             return CreatedAtAction(nameof(GetRecordItem), new { id = recordItem.id }, recordItem);
+          
         }
 
         // DELETE: api/5
