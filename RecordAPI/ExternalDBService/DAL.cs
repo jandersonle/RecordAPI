@@ -17,14 +17,12 @@ namespace RecordAPI.ExternalDBService
         /// </summary>
         public bool Initialize(String iconnStr)
         {
-            // TODO look into connection string objects
             _connection = new(iconnStr);
             bool isValid = false;
             try
             {
                 _connection.Open();
                 isValid = true;
-                _connection.Close();
 
             } catch (SqlException ex) 
             {
@@ -58,15 +56,12 @@ namespace RecordAPI.ExternalDBService
             
             DataTable dt = new();
             var rows_returned = 0;
-            // TODO find out what happens if the connection bombs
             using(SqlCommand cmd = _connection.CreateCommand())
             using(SqlDataAdapter sda = new(cmd))
             { 
                 cmd.CommandText = iQuery;
                 cmd.CommandType = CommandType.Text;
-                _connection.Open();
                 rows_returned = sda.Fill(dt);
-                _connection.Close();
             }
 
             return dt;

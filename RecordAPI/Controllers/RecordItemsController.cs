@@ -32,6 +32,7 @@ namespace RecordAPI.Controllers
             _runner = new(iconnStr);
         }
 
+
         // GET: api/
         [HttpGet]
         public async Task<ActionResult<IEnumerable<RecordItem>>> GetRecordItems()
@@ -43,14 +44,16 @@ namespace RecordAPI.Controllers
             return await _context.RecordItems.ToListAsync();
         }
 
+
         // GET: api/5
         [HttpGet("{id}")]
         public async Task<ActionResult<RecordItem>> GetRecordItem(long id)
         {
-          if (_context.RecordItems == null)
-          {
-              return NotFound();
-          }
+            if (_context.RecordItems == null)
+            {
+                return NotFound();
+            }
+
             var recordItem = await _context.RecordItems.FindAsync(id);
 
             if (recordItem == null)
@@ -60,6 +63,8 @@ namespace RecordAPI.Controllers
 
             return recordItem;
         }
+
+
         // GET api/exposures/id
         [HttpGet("exposures/{id}")]
         public async Task<ActionResult<object>> GetExposure(long id)
@@ -67,8 +72,8 @@ namespace RecordAPI.Controllers
             // LATEST APPROACH
             var res = _runner.GetExposure(id);
             return res;
-
         }
+
 
         // GET api/calls/id
         [HttpGet("calls/{id}")]
@@ -77,57 +82,8 @@ namespace RecordAPI.Controllers
             // LATEST APPROACH
             var res = _runner.GetCall(id);
             return res;
-
-
-            // ALTERNATIVE 1
-            //var sqlQuery = @"select *
-            //                from Call 
-            //                where CALL_ID_NB = " + id + ";";
-            //DataTable dt = new();
-            //var connStr = iconnStr;
-            //var rows_returned = 0;
-
-            //using (SqlConnection connection = new(connStr))
-            //using (SqlCommand cmd = connection.CreateCommand())
-            //using (SqlDataAdapter sda = new(cmd))
-            //{
-            //    cmd.CommandText = sqlQuery;
-            //    cmd.CommandType = CommandType.Text;
-            //    connection.Open();
-            //    rows_returned = sda.Fill(dt);
-            //    connection.Close();
-            //}
-
-            //if (dt.Rows.Count == 1)
-            //{
-            //    return dt.ToJson();
-            //}
-
-            //return NotFound();
-
-
-            // ALTERNATIVE 2
-            //SqlConnection conn = new SqlConnection(iconnStr);
-            //var dbCmd = new SqlCommand();
-            //using(dbCmd)
-            //{
-            //    dbCmd.Connection = conn;
-            //    dbCmd.CommandText = sqlQuery;
-            //    conn.Open();
-
-            //    using (var reader = dbCmd.ExecuteReader())
-            //    {
-            //        if(reader.HasRows)
-            //        {
-            //            return reader.ToJson();
-            //        }
-            //        else
-            //        {
-            //            return NotFound();
-            //        }
-            //    }
-            //}
         }
+
 
         // PUT: api/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754

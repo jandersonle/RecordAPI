@@ -1,6 +1,7 @@
 ﻿using Microsoft.Data.SqlClient;
 using Newtonsoft.Json;
 using NuGet.Protocol;
+using System.Data;
 
 namespace RecordAPI.ExternalDBService
 {
@@ -64,6 +65,30 @@ namespace RecordAPI.ExternalDBService
 
             if (_dataAccess != null && _dataAccess.IsValidConnection())
             {
+                //DataTable res = _dataAccess.QueryDatabase(query);
+                //String context = "";
+                //for(int i = 1; i < res.Columns.Count; i++)
+                //{
+                //    if (res.Rows[0][i] != DBNull.Value)
+                //    {
+                //        if (i != res.Columns.Count - 1)
+                //        {
+                //            // TODO handle imcompatible string converts
+                //            // Parse the 32bit integers into strings
+                //            String curr = (string)res.Rows[0][i];
+                //            curr = curr.Trim();
+                //            context += curr + ",";
+                //        }
+                //        else
+                //        {
+                //            context += res.Rows[0][i];
+                //        }
+                //    } 
+                //    else
+                //    {
+                //        continue;
+                //    }
+                //}
                 var res = JsonConvert.SerializeObject(_dataAccess.QueryDatabase(query));
                 return res;
             }
