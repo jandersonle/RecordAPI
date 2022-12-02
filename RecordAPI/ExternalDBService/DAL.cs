@@ -15,25 +15,50 @@ namespace RecordAPI.ExternalDBService
         /// <summary>
         /// Method <c>initialize</c> estbalishes a SQL connection object binded to the provided connection string.
         /// </summary>
-        public void initialize(String iconnStr)
+        public bool Initialize(String iconnStr)
         {
+            // TODO look into connection string objects
             _connection = new(iconnStr);
+            bool isValid = false;
+            try
+            {
+                _connection.Open();
+                isValid = true;
+                _connection.Close();
+
+            } catch (SqlException ex) 
+            {
+                isValid = false;
+                _connection = null;
+            }
+
+            return isValid;
+
+        }
+
+
+        /// <summary>
+        /// Method <c>isValidConnection</c> returns if the internal SqlConnection object is valid.
+        /// </summary>
+        public bool IsValidConnection()
+        {
+            return _connection != null;
         }
 
 
         /// <summary>
         /// Method <c>queryDatabase</c> executes the provided query on the database and returns all results within a DataTable.
         /// </summary>
-        public DataTable queryDatabase(string iQuery = "")
+        public DataTable QueryDatabase(string iQuery = "")
         {
             if (iQuery.Equals(""))
             {
                 return new DataTable();
             }
-
+            
             DataTable dt = new();
             var rows_returned = 0;
-            
+            // TODO find out what happens if the connection bombs
             using(SqlCommand cmd = _connection.CreateCommand())
             using(SqlDataAdapter sda = new(cmd))
             { 

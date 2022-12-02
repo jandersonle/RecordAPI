@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using NuGet.Protocol;
 using RecordAPI.ExternalDBService;
+using Microsoft.Extensions.Configuration;
 using RecordAPI.Models;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -23,7 +24,7 @@ namespace RecordAPI.Controllers
 
         private readonly ExternalDbRunner _runner;
 
-        private readonly string iconnStr = "";
+        private readonly string iconnStr = "data Source = 10.1.0.5; Encrypt = yes; TrustServerCertificate = True; Initial Catalog = UFPoison; Max Pool Size = 200; App = ToxSentry NPDS AU-Dev; MultipleActiveResultSets = true;User ID = ToxSentryApp; Password=4gKAhcEJbsZ5CN&x";
 
         public RecordItemsController(RecordContext context)
         {
@@ -64,7 +65,7 @@ namespace RecordAPI.Controllers
         public async Task<ActionResult<object>> GetExposure(long id)
         {
             // LATEST APPROACH
-            var res = _runner.getExposure(id);
+            var res = _runner.GetExposure(id);
             return res;
 
         }
@@ -74,7 +75,7 @@ namespace RecordAPI.Controllers
         public async Task<ActionResult<object>> GetCall(long id)
         {
             // LATEST APPROACH
-            var res = _runner.getCall(id);
+            var res = _runner.GetCall(id);
             return res;
 
 

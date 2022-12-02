@@ -16,7 +16,7 @@ namespace RecordAPI.ExternalDBService
 
         public ExternalDbRunner(String iconnStr)
         {
-            this.init(iconnStr);
+            this.Init(iconnStr);
 
         }
 
@@ -24,10 +24,10 @@ namespace RecordAPI.ExternalDBService
         /// <summary>
         /// Method <c>init</c> initalizes an internal DataAcessLayer object passing in the provided database connection string.
         /// </summary>
-        private void init(String iconnStr)
+        private void Init(String iconnStr)
         {
             _dataAccess = new();
-            _dataAccess.initialize(iconnStr);
+            bool isValid =_dataAccess.Initialize(iconnStr);
             return;
         }
 
@@ -36,15 +36,15 @@ namespace RecordAPI.ExternalDBService
         /// Method <c>getExposure</c> retreives the Exposure with the provided EXPO_ID_NB and returns it in a json format.
         /// If the exposure does not exist, an empty string is returned.
         /// </summary>
-        public String getExposure(long id)
+        public String GetExposure(long id)
         {
             String query = @"select *
                             from Exposure
                             where EXPO_ID_NB = " + id + ";";
 
-            if (_dataAccess != null)
+            if (_dataAccess != null && _dataAccess.IsValidConnection())
             {
-                var res = JsonConvert.SerializeObject(_dataAccess.queryDatabase(query));
+                var res = JsonConvert.SerializeObject(_dataAccess.QueryDatabase(query));
                 return res;
             }
 
@@ -56,15 +56,15 @@ namespace RecordAPI.ExternalDBService
         /// Method <c>geCall</c> retreives the Call with the provided CALL_ID_NB and returns it in a json format
         /// If the call does not exist, an empty string is returned.
         /// </summary>
-        public String getCall(long id)
+        public String GetCall(long id)
         {
             String query = @"select *
                             from Call
                             where CALL_ID_NB = " + id + ";";
 
-            if (_dataAccess != null)
+            if (_dataAccess != null && _dataAccess.IsValidConnection())
             {
-                var res = JsonConvert.SerializeObject(_dataAccess.queryDatabase(query));
+                var res = JsonConvert.SerializeObject(_dataAccess.QueryDatabase(query));
                 return res;
             }
 
